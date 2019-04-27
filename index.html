@@ -14,8 +14,8 @@
 <body>
     <header>
         <div 1class="logo">
-<h2 class logo>Chess </h2>
-</div>
+            <h2 class logo>Chess </h2>
+        </div>
     </header>
     <div id="main">
         <div id="board">
@@ -25,10 +25,22 @@
     </div>
 
     <script>
-        let map = Array ();
-        function init_map (){
-            map =
+        let map = Array();
+
+        function init_map() { //starting figure position
+            // map[x][y]  R - white . r - black
+     map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
+                ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
+                ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
+                ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
+                ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
+                ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
+                ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
+                ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
+                ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
+            ];
         }
+
         function show_map() {
             html = "<table border = '1' cellpadding = '2' cellspacing='0' >";
             for (let y = 7; y >= 0; y--) {
@@ -36,7 +48,12 @@
                 html += "<td>&nbsp;" + y + "&nbsp;</td>";
                 for (let x = 0; x <= 7; x++) {
                     color = (x + y) % 2 ? "white" : "grey";
-                    html += "<td style = 'height: 50px; width: 50px; " + " background-color : " + color + "'></td>";
+                    html += "<td style = 'height: 50px; width: 50px; " + 
+                    " background-color : " + color +  ";"+
+                    " text-align: center ; "+
+                    "'>";
+                    html += map[x] [y]; 
+                    html += "</td>";
                 }
                 html += "</tr>";
             }
@@ -47,6 +64,7 @@
             }
             document.getElementById("board").innerHTML = html;
         }
+        init_map();
         show_map();
     </script>
 
