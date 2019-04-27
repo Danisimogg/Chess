@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width= , initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>chess</title>
     <!-- <link rel="stylesheet" type="text/css" href="chess.css">
@@ -26,7 +26,7 @@
 
     <script>
         let map = Array();
-
+        let inf = Array();
         function init_map() { //starting figure position
             // map[x][y]  R - white . r - black
             map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
@@ -40,7 +40,18 @@
                 ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
             ];
         }
-
+        function init_inf (){
+           inf =[ // changes by step 
+                [" ", " ", " ", " ", " ", " ", " ", " "], // 
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", "1", "2", "2", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "] 
+            ];
+        }
         function figure_to_html(figure) {
  switch(figure)
  {
@@ -60,7 +71,11 @@
                 html += "<tr>";
                 html += "<td>&nbsp;" + y + "&nbsp;</td>";
                 for (let x = 0; x <= 7; x++) {
+                    if (inf[x] [y] == " ")
                     color = (x + y) % 2 ? "white" : "grey";
+                    
+                    else
+                    color = inf [x] [y] == "1" ? "#aaffaa" : "#FF69B4" ;
                     html += "<td style = 'height: 50px; width: 50px; " +
                         " background-color : " + color + ";" +
                         " text-align: center ; " +
@@ -80,7 +95,9 @@
             document.getElementById("board").innerHTML = html;
         }
         init_map();
+        init_inf();
         show_map();
+       
     </script>
 
 
