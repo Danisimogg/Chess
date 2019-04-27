@@ -65,6 +65,7 @@
                     if (can_move_from(x, y))
                         inf[x][y] = 1;
         }
+
         function mark_moves_to() {
             init_inf();
             for (let x = 0; x <= 7; x++)
@@ -77,9 +78,10 @@
             return get_color(x, y) == move_color;
 
         }
+
         function can_move_to(x, y) {
-            if(map [x] [y] == " ")
-            return true;
+            if (map[x][y] == " ")
+                return true;
             return get_color(x, y) != move_color; // white cat goes to black
 
         }
@@ -108,7 +110,18 @@
         }
 
         function click_box_to(x, y) {
-
+            map[x][y] = map[move_from_x][move_from_y];
+            map[move_from_x][move_from_y] = " "; // deleted old figure
+            
+            turn_move();
+            mark_moves_from();//change figue
+            show_map();
+        }
+        function turn_move (){
+            if(move_color == "white")
+            move_color = "black";
+            else
+            move_color = "white";
         }
 
         function figure_to_html(figure) {
@@ -170,10 +183,12 @@
                 html += "<td style = 'text=align: center '>" + x + "</td>";
             }
             document.getElementById("board").innerHTML = html;
-        }
+        }function start () {
         init_map();
         mark_moves_from();
         show_map();
+        };
+        start();
     </script>
 
 
