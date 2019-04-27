@@ -29,7 +29,7 @@
 
         function init_map() { //starting figure position
             // map[x][y]  R - white . r - black
-     map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
+            map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
                 ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
                 ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
                 ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
@@ -41,6 +41,19 @@
             ];
         }
 
+        function figure_to_html(figure) {
+ switch(figure)
+ {
+     case "K" :return "&#9812;"; case "k" :return "&#9818;";
+     case "Q" :return "&#9813;"; case "q" :return "&#9819;";
+     case "R" :return "&#9814;"; case "r" :return "&#9820;";
+     case "B" :return "&#9815;"; case "b" :return "&#9821;";
+     case "N" :return "&#9816;"; case "n" :return "&#9822;";
+     case "P" :return "&#9817;"; case "p" :return "&#9823;";
+     default :return "&nbsp;";
+ }
+        }
+
         function show_map() {
             html = "<table border = '1' cellpadding = '2' cellspacing='0' >";
             for (let y = 7; y >= 0; y--) {
@@ -48,11 +61,13 @@
                 html += "<td>&nbsp;" + y + "&nbsp;</td>";
                 for (let x = 0; x <= 7; x++) {
                     color = (x + y) % 2 ? "white" : "grey";
-                    html += "<td style = 'height: 50px; width: 50px; " + 
-                    " background-color : " + color +  ";"+
-                    " text-align: center ; "+
-                    "'>";
-                    html += map[x] [y]; 
+                    html += "<td style = 'height: 50px; width: 50px; " +
+                        " background-color : " + color + ";" +
+                        " text-align: center ; " +
+                        "font-size:40px"+
+                        
+                        "'>";
+                    html += figure_to_html (map[x][y]);
                     html += "</td>";
                 }
                 html += "</tr>";
