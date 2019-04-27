@@ -1,0 +1,30 @@
+.logo{
+    text-align: center;
+}
+.board {
+    width: 160px;
+    height: 160px;
+    border: 20px solid darkred;
+}
+
+.square {
+    float: left;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.black {
+    background-color: grey;
+
+}
+
+.white {
+    background-color: white;
+}
+.figure {
+    font-size: 60px;
+    cursor: pointer;
+}
