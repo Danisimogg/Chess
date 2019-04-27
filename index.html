@@ -27,6 +27,7 @@
     <script>
         let map = Array();
         let inf = Array();
+        let move_color = "white";
         function init_map() { //starting figure position
             // map[x][y]  R - white . r - black
             map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
@@ -46,11 +47,29 @@
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", "1", "2", "2", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "] 
             ];
+        }
+        function mark_moves_from(){
+            init_inf ();
+            for(let x = 0; x <= 7;x++)
+            for(let y = 0; y <= 7;y++)
+            if (can_move_from (x, y))
+            inf [x] [y] = 1;
+        }
+        function can_move_from (x,y){
+            return get_color (x,y) == move_color;
+           
+        }
+        function get_color(x,y)
+        {
+            let figure = map [x] [y];
+            if (figure == " ")
+            return "";
+            return(figure.toUpperCase()==figure)? "white" : "black";
         }
         function figure_to_html(figure) {
  switch(figure)
@@ -95,7 +114,7 @@
             document.getElementById("board").innerHTML = html;
         }
         init_map();
-        init_inf();
+       mark_moves_from();
         show_map();
        
     </script>
