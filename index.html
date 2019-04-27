@@ -28,6 +28,9 @@
         let map = Array();
         let inf = Array();
         let move_color = "white";
+        let move_from_x;
+        let move_from_y;
+
         function init_map() { //starting figure position
             // map[x][y]  R - white . r - black
             map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
@@ -41,8 +44,9 @@
                 ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
             ];
         }
-        function init_inf (){
-           inf =[ // changes by step 
+
+        function init_inf() {
+            inf = [ // changes by step 
                 [" ", " ", " ", " ", " ", " ", " ", " "], // 
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
@@ -50,38 +54,92 @@
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
                 [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "] 
+                [" ", " ", " ", " ", " ", " ", " ", " "]
             ];
         }
-        function mark_moves_from(){
-            init_inf ();
-            for(let x = 0; x <= 7;x++)
-            for(let y = 0; y <= 7;y++)
-            if (can_move_from (x, y))
-            inf [x] [y] = 1;
+
+        function mark_moves_from() {
+            init_inf();
+            for (let x = 0; x <= 7; x++)
+                for (let y = 0; y <= 7; y++)
+                    if (can_move_from(x, y))
+                        inf[x][y] = 1;
         }
-        function can_move_from (x,y){
-            return get_color (x,y) == move_color;
-           
+        function mark_moves_to() {
+            init_inf();
+            for (let x = 0; x <= 7; x++)
+                for (let y = 0; y <= 7; y++)
+                    if (can_move_to(x, y))
+                        inf[x][y] = 2;
         }
-        function get_color(x,y)
-        {
-            let figure = map [x] [y];
+
+        function can_move_from(x, y) {
+            return get_color(x, y) == move_color;
+
+        }
+        function can_move_to(x, y) {
+            if(map [x] [y] == " ")
+            return true;
+            return get_color(x, y) != move_color; // white cat goes to black
+
+        }
+
+        function get_color(x, y) {
+            let figure = map[x][y];
             if (figure == " ")
-            return "";
-            return(figure.toUpperCase()==figure)? "white" : "black";
+                return "";
+            return (figure.toUpperCase() == figure) ? "white" : "black";
         }
+
+        function click_box(x, y) {
+            if (inf[x][y] == "1")
+                click_box_from(x, y);
+            if (inf[x][y] == "2")
+                click_box_to(x, y);
+
+
+        }
+
+        function click_box_from(x, y) {
+            move_from_x = x;
+            move_from_y = y; // save corinait of figure
+            mark_moves_to();
+            show_map();
+        }
+
+        function click_box_to(x, y) {
+
+        }
+
         function figure_to_html(figure) {
- switch(figure)
- {
-     case "K" :return "&#9812;"; case "k" :return "&#9818;";
-     case "Q" :return "&#9813;"; case "q" :return "&#9819;";
-     case "R" :return "&#9814;"; case "r" :return "&#9820;";
-     case "B" :return "&#9815;"; case "b" :return "&#9821;";
-     case "N" :return "&#9816;"; case "n" :return "&#9822;";
-     case "P" :return "&#9817;"; case "p" :return "&#9823;";
-     default :return "&nbsp;";
- }
+            switch (figure) {
+                case "K":
+                    return "&#9812;";
+                case "k":
+                    return "&#9818;";
+                case "Q":
+                    return "&#9813;";
+                case "q":
+                    return "&#9819;";
+                case "R":
+                    return "&#9814;";
+                case "r":
+                    return "&#9820;";
+                case "B":
+                    return "&#9815;";
+                case "b":
+                    return "&#9821;";
+                case "N":
+                    return "&#9816;";
+                case "n":
+                    return "&#9822;";
+                case "P":
+                    return "&#9817;";
+                case "p":
+                    return "&#9823;";
+                default:
+                    return "&nbsp;";
+            }
         }
 
         function show_map() {
@@ -90,18 +148,18 @@
                 html += "<tr>";
                 html += "<td>&nbsp;" + y + "&nbsp;</td>";
                 for (let x = 0; x <= 7; x++) {
-                    if (inf[x] [y] == " ")
-                    color = (x + y) % 2 ? "white" : "grey";
-                    
+                    if (inf[x][y] == " ")
+                        color = (x + y) % 2 ? "white" : "grey";
+
                     else
-                    color = inf [x] [y] == "1" ? "#aaffaa" : "#FF69B4" ;
+                        color = inf[x][y] == "1" ? "#aaffaa" : "#FF69B4";
                     html += "<td style = 'height: 50px; width: 50px; " +
                         " background-color : " + color + ";" +
                         " text-align: center ; " +
-                        "font-size:40px"+
-                        
-                        "'>";
-                    html += figure_to_html (map[x][y]);
+                        "font-size:40px" +
+
+                        "' onclick = 'click_box(" + x + "," + y + ");'>";
+                    html += figure_to_html(map[x][y]);
                     html += "</td>";
                 }
                 html += "</tr>";
@@ -114,9 +172,8 @@
             document.getElementById("board").innerHTML = html;
         }
         init_map();
-       mark_moves_from();
+        mark_moves_from();
         show_map();
-       
     </script>
 
 
