@@ -1,307 +1,327 @@
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>chess</title>
-    <!-- <link rel="stylesheet" type="text/css" href="chess.css">
-    -->
-    <style>
-        .figure_to_html {
-            cursor: pointer;
-        }
-    </style>
-    <script src="chess.js"></script>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>chess</title>
+        <!-- <link rel="stylesheet" type="text/css" href="chess.css">
+        -->
+        <style>
+            .figure_to_html {
+                cursor: pointer;
+            }
+        </style>
+        <script src="chess.js"></script>
+    </head>
 
-<body>
-    <header>
-        <div 1class="logo">
-            <h2 class logo>Chess </h2>
+    <body>
+        <header>
+            <div 1class="logo">
+                <h2 class logo>Chess </h2>
+            </div>
+        </header>
+        <div id="main">
+            <div id="board">
+
+            </div>
+            <div id="info">info</div>
         </div>
-    </header>
-    <div id="main">
-        <div id="board">
 
-        </div>
-        <div id="info">info</div>
-    </div>
+        <script>
+            let map = Array();
+            let inf = Array();
+            let move_color = "white";
+            let move_from_x;
+            let move_from_y;
 
-    <script>
-        let map = Array();
-        let inf = Array();
-        let move_color = "white";
-        let move_from_x;
-        let move_from_y;
-
-        function init_map() { //starting figure position
-            // map[x][y]  R - white . r - black
-            map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
-                ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
-                ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
-                ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
-                ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
-                ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
-                ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
-                ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
-                ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
-            ];
-        }
-
-        function init_inf() {
-            inf = [ // changes by step 
-                [" ", " ", " ", " ", " ", " ", " ", " "], // 
-                [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "],
-                [" ", " ", " ", " ", " ", " ", " ", " "]
-            ];
-        }
-
-        function is_correct_move(sx, sy, dx, dy) {
-            let figure = map[sx][sy];
-            if (is_king(figure)) {
-                return is_correct_king_move(sx, sy, dx, dy);
+            function init_map() { //starting figure position
+                // map[x][y]  R - white . r - black
+                map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
+                    ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
+                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
+                    ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
+                    ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
+                    ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
+                    ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
+                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
+                    ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
+                ];
             }
-            if (is_queen(figure)) {
-                return is_correct_queen_move(sx, sy, dx, dy);
+
+            function init_inf() {
+                inf = [ // changes by step 
+                    [" ", " ", " ", " ", " ", " ", " ", " "], // 
+                    [" ", " ", " ", " ", " ", " ", " ", " "],
+                    [" ", " ", " ", " ", " ", " ", " ", " "],
+                    [" ", " ", " ", " ", " ", " ", " ", " "],
+                    [" ", " ", " ", " ", " ", " ", " ", " "],
+                    [" ", " ", " ", " ", " ", " ", " ", " "],
+                    [" ", " ", " ", " ", " ", " ", " ", " "],
+                    [" ", " ", " ", " ", " ", " ", " ", " "]
+                ];
             }
-            if (is_bishop(figure)) {
-                return is_correct_bishop_move(sx, sy, dx, dy);
-            }
-            if (is_knight(figure)) {
-                return is_correct_knight_move(sx, sy, dx, dy);
-            }
-            if (is_rook(figure)) {
-                return is_correct_rook_move(sx, sy, dx, dy);
-            }
-            if (is_pawn(figure)) {
-                return is_correct_pawn_move(sx, sy, dx, dy);
-            }
-            return true;
-        }
 
-        function is_king(figure) {
-            return figure.toUpperCase() == "K";
-        }
-
-        function is_queen(figure) {
-            return figure.toUpperCase() == "Q";
-        }
-
-        function is_bishop(figure) {
-            return figure.toUpperCase() == "B";
-        }
-
-        function is_knight(figure) {
-            return figure.toUpperCase() == "N";
-        }
-
-        function is_rook(figure) {
-            return figure.toUpperCase() == "R";
-        }
-
-        function is_pawn(figure) {
-            return figure.toUpperCase() == "P";
-        }
-
-        function is_correct_king_move(sx, sy, dx, dy) {
-            if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
-                return true;
-            }
-            return false;
-        }
-
-        function is_correct_queen_move(sx, sy, dx, dy) {
-            return true;
-        }
-
-        function is_correct_bishop_move(sx, sy, dx, dy) {
-            return true;
-        }
-
-        function is_correct_knight_move(sx, sy, dx, dy) // only check thet can move fore other pozition
-        {
-            if (Math.abs(dx - sx) == 1 && Math.abs(dy - sy) == 2)
-                return true;
-            if (Math.abs(dx - sx) == 2 && Math.abs(dy - sy) == 1)
-                return true;
-            return false;
-        }
-
-        function is_correct_rook_move(sx, sy, dx, dy) {
-
-            let delta_x = 0; // 
-            let delta_y = 0;
-            if (dx > sx) delta_x = +1;
-            if (dx < sx) delta_x = -1;
-            if (dy > sy) delta_y = +1;
-            if (dy < sy) delta_y = -1;
-            if (Math.abs(delta_x) + Math.abs(delta_y) != 1) { //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
-                return false
-            }
-            return true;
-        }
-
-        function is_correct_pawn_move(sx, sy, dx, dy) {
-            return true;
-        }
-
-        function can_move(sx, sy, dx, dy) {
-            if (!can_move_from(sx, sy)) // figure can step
-                return false;
-            if (!can_move_to(dx, dy)) // square free ( or can kill)
-                return false;
-            if (!is_correct_move(sx, sy, dx, dy))
-                return false;
-            return true;
-        }
-
-        function mark_moves_from() {
-            init_inf();
-            for (let sx = 0; sx <= 7; sx++)
-                for (let sy = 0; sy <= 7; sy++)
-                    for (let dx = 0; dx <= 7; dx++)
-                        for (let dy = 0; dy <= 7; dy++)
-                            if (can_move(sx, sy, dx, dy))
-                                inf[sx][sy] = 1;
-        }
-
-        function mark_moves_to() {
-            init_inf();
-            for (let x = 0; x <= 7; x++)
-                for (let y = 0; y <= 7; y++)
-                    if (can_move(move_from_x, move_from_y, x, y))
-                        inf[x][y] = 2;
-        }
-
-        function can_move_from(x, y) {
-            return get_color(x, y) == move_color;
-
-        }
-
-        function can_move_to(x, y) {
-            if (map[x][y] == " ")
-                return true;
-            return get_color(x, y) != move_color; // white cat goes to black
-
-        }
-
-        function get_color(x, y) {
-            let figure = map[x][y];
-            if (figure == " ")
-                return "";
-            return (figure.toUpperCase() == figure) ? "white" : "black";
-        }
-
-        function click_box(x, y) {
-            if (inf[x][y] == "1")
-                click_box_from(x, y);
-            if (inf[x][y] == "2")
-                click_box_to(x, y);
-
-
-        }
-
-        function click_box_from(x, y) {
-            move_from_x = x;
-            move_from_y = y; // save corinait of figure
-            mark_moves_to();
-            show_map();
-        }
-
-        function click_box_to(x, y) {
-            map[x][y] = map[move_from_x][move_from_y];
-            map[move_from_x][move_from_y] = " "; // deleted old figure
-
-            turn_move();
-            mark_moves_from(); //change figue
-            show_map();
-        }
-
-        function turn_move() {
-            if (move_color == "white")
-                move_color = "black";
-            else
-                move_color = "white";
-        }
-
-        function figure_to_html(figure) {
-            switch (figure) {
-                case "K":
-                    return "&#9812;";
-                case "k":
-                    return "&#9818;";
-                case "Q":
-                    return "&#9813;";
-                case "q":
-                    return "&#9819;";
-                case "R":
-                    return "&#9814;";
-                case "r":
-                    return "&#9820;";
-                case "B":
-                    return "&#9815;";
-                case "b":
-                    return "&#9821;";
-                case "N":
-                    return "&#9816;";
-                case "n":
-                    return "&#9822;";
-                case "P":
-                    return "&#9817;";
-                case "p":
-                    return "&#9823;";
-                default:
-                    return "&nbsp;";
-            }
-        }
-
-        function show_map() {
-            html = "<table border = '1' cellpadding = '2' cellspacing='0' >";
-            for (let y = 7; y >= 0; y--) {
-                html += "<tr>";
-                html += "<td>&nbsp;" + y + "&nbsp;</td>";
-                for (let x = 0; x <= 7; x++) {
-                    if (inf[x][y] == " ")
-                        color = (x + y) % 2 ? "white" : "grey";
-
-                    else
-                        color = inf[x][y] == "1" ? "#aaffaa" : "#FF69B4";
-                    html += "<td style = 'height: 50px; width: 50px; " +
-                        " background-color : " + color + ";" +
-                        " text-align: center ; " +
-                        "font-size:40px" +
-
-                        "' onclick = 'click_box(" + x + "," + y + ");'>";
-                    html += figure_to_html(map[x][y]);
-                    html += "</td>";
+            function is_correct_move(sx, sy, dx, dy) {
+                let figure = map[sx][sy];
+                if (is_king(figure)) {
+                    return is_correct_king_move(sx, sy, dx, dy);
                 }
-                html += "</tr>";
+                if (is_queen(figure)) {
+                    return is_correct_queen_move(sx, sy, dx, dy);
+                }
+                if (is_bishop(figure)) {
+                    return is_correct_bishop_move(sx, sy, dx, dy);
+                }
+                if (is_knight(figure)) {
+                    return is_correct_knight_move(sx, sy, dx, dy);
+                }
+                if (is_rook(figure)) {
+                    return is_correct_rook_move(sx, sy, dx, dy);
+                }
+                if (is_pawn(figure)) {
+                    return is_correct_pawn_move(sx, sy, dx, dy);
+                }
+                return true;
             }
-            html += "<tr>";
-            html += "<td>&nbsp; </td>";
-            for (let x = 1; x <= 8; x++) {
-                html += "<td style = 'text=align: center '>" + x + "</td>";
+
+            function is_king(figure) {
+                return figure.toUpperCase() == "K";
             }
-            document.getElementById("board").innerHTML = html;
-        }
 
-        function start() {
-            init_map();
-            mark_moves_from();
-            show_map();
-        };
-        start();
-    </script>
+            function is_queen(figure) {
+                return figure.toUpperCase() == "Q";
+            }
+
+            function is_bishop(figure) {
+                return figure.toUpperCase() == "B";
+            }
+
+            function is_knight(figure) {
+                return figure.toUpperCase() == "N";
+            }
+
+            function is_rook(figure) {
+                return figure.toUpperCase() == "R";
+            }
+
+            function is_pawn(figure) {
+                return figure.toUpperCase() == "P";
+            }
+
+            function is_correct_king_move(sx, sy, dx, dy) {
+                if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
+                    return true;
+                }
+                return false;
+            }
+
+            function is_correct_queen_move(sx, sy, dx, dy) {
+                return true;
+            }
+
+            function is_correct_bishop_move(sx, sy, dx, dy) {
+                return true;
+            }
+
+            function is_correct_knight_move(sx, sy, dx, dy) // only check thet can move fore other pozition
+            {
+                if (Math.abs(dx - sx) == 1 && Math.abs(dy - sy) == 2)
+                    return true;
+                if (Math.abs(dx - sx) == 2 && Math.abs(dy - sy) == 1)
+                    return true;
+                return false;
+            }
+
+            function is_correct_rook_move(sx, sy, dx, dy) {
+
+                let delta_x = Math.sign(dx - sx); // 
+                let delta_y = Math.sign(dy - sy);
+                // if (dx > sx) delta_x = +1;
+                // if (dx < sx) delta_x = -1;
+                // if (dy > sy) delta_y = +1;
+                // if (dy < sy) delta_y = -1;
+                if (Math.abs(delta_x) + Math.abs(delta_y) !=
+                    1) { //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
+                    return false;
+                }
+
+
+                do {
+                    sx += delta_x;
+                    sy += delta_y;
+                    if (sx == dx && sy == dy) {
+                        return true;
+                    }
+
+                    if (map[sx][sy] != " ") {
+                        return false;
+                    }
+
+                } while (on_map(sx, sy)) // сразу смещаем потом проверяем 
+                return true;
+            }
+
+            function on_map(x, y) {
+                return (x >= 0 && x <= 7 &&
+                    y >= 0 && y <= 7)
+            }
+
+            function is_correct_pawn_move(sx, sy, dx, dy) {
+                return true;
+            }
+
+            function can_move(sx, sy, dx, dy) {
+                if (!can_move_from(sx, sy)) // figure can step
+                    return false;
+                if (!can_move_to(dx, dy)) // square free ( or can kill)
+                    return false;
+                if (!is_correct_move(sx, sy, dx, dy))
+                    return false;
+                return true;
+            }
+
+            function mark_moves_from() {
+                init_inf();
+                for (let sx = 0; sx <= 7; sx++)
+                    for (let sy = 0; sy <= 7; sy++)
+                        for (let dx = 0; dx <= 7; dx++)
+                            for (let dy = 0; dy <= 7; dy++)
+                                if (can_move(sx, sy, dx, dy))
+                                    inf[sx][sy] = 1;
+            }
+
+            function mark_moves_to() {
+                init_inf();
+                for (let x = 0; x <= 7; x++)
+                    for (let y = 0; y <= 7; y++)
+                        if (can_move(move_from_x, move_from_y, x, y))
+                            inf[x][y] = 2;
+            }
+
+            function can_move_from(x, y) {
+                return get_color(x, y) == move_color;
+
+            }
+
+            function can_move_to(x, y) {
+                if (map[x][y] == " ")
+                    return true;
+                return get_color(x, y) != move_color; // white cat goes to black
+
+            }
+
+            function get_color(x, y) {
+                let figure = map[x][y];
+                if (figure == " ")
+                    return "";
+                return (figure.toUpperCase() == figure) ? "white" : "black";
+            }
+
+            function click_box(x, y) {
+                if (inf[x][y] == "1")
+                    click_box_from(x, y);
+                if (inf[x][y] == "2")
+                    click_box_to(x, y);
+
+
+            }
+
+            function click_box_from(x, y) {
+                move_from_x = x;
+                move_from_y = y; // save corinait of figure
+                mark_moves_to();
+                show_map();
+            }
+
+            function click_box_to(x, y) {
+                map[x][y] = map[move_from_x][move_from_y];
+                map[move_from_x][move_from_y] = " "; // deleted old figure
+
+                turn_move();
+                mark_moves_from(); //change figue
+                show_map();
+            }
+
+            function turn_move() {
+                if (move_color == "white")
+                    move_color = "black";
+                else
+                    move_color = "white";
+            }
+
+            function figure_to_html(figure) {
+                switch (figure) {
+                    case "K":
+                        return "&#9812;";
+                    case "k":
+                        return "&#9818;";
+                    case "Q":
+                        return "&#9813;";
+                    case "q":
+                        return "&#9819;";
+                    case "R":
+                        return "&#9814;";
+                    case "r":
+                        return "&#9820;";
+                    case "B":
+                        return "&#9815;";
+                    case "b":
+                        return "&#9821;";
+                    case "N":
+                        return "&#9816;";
+                    case "n":
+                        return "&#9822;";
+                    case "P":
+                        return "&#9817;";
+                    case "p":
+                        return "&#9823;";
+                    default:
+                        return "&nbsp;";
+                }
+            }
+
+            function show_map() {
+                html = "<table border = '1' cellpadding = '2' cellspacing='0' >";
+                for (let y = 7; y >= 0; y--) {
+                    html += "<tr>";
+                    html += "<td>&nbsp;" + y + "&nbsp;</td>";
+                    for (let x = 0; x <= 7; x++) {
+                        if (inf[x][y] == " ")
+                            color = (x + y) % 2 ? "white" : "grey";
+
+                        else
+                            color = inf[x][y] == "1" ? "#aaffaa" : "#FF69B4";
+                        html += "<td style = 'height: 50px; width: 50px; " +
+                            " background-color : " + color + ";" +
+                            " text-align: center ; " +
+                            "font-size:40px" +
+
+                            "' onclick = 'click_box(" + x + "," + y + ");'>";
+                        html += figure_to_html(map[x][y]);
+                        html += "</td>";
+                    }
+                    html += "</tr>";
+                }
+                html += "<tr>";
+                html += "<td>&nbsp; </td>";
+                for (let x = 1; x <= 8; x++) {
+                    html += "<td style = 'text=align: center '>" + x + "</td>";
+                }
+                document.getElementById("board").innerHTML = html;
+            }
+
+            function start() {
+                init_map();
+                mark_moves_from();
+                show_map();
+            };
+            start();
+        </script>
 
 
 
-</body>
+    </body>
 
-</html>
+    </html>
