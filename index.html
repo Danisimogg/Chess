@@ -110,27 +110,17 @@
                 return figure.toUpperCase() == "P";
             }
 
-            function is_correct_king_move(sx, sy, dx, dy) {
-                if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
-                    return true;
-                }
-                return false;
-            }
-
-            function is_correct_queen_move(sx, sy, dx, dy) {
-                return true;
-            }
-
-            function is_correct_bishop_move(sx, sy, dx, dy) {
+            function is_correct_line_move(sx, sy, dx, dy, figure) {
                 let delta_x = Math.sign(dx - sx);
                 let delta_y = Math.sign(dy - sy);
-
-                if (Math.abs(delta_x) + Math.abs(delta_y) != 2) {
+                // if (dx > sx) delta_x = +1;
+                // if (dx < sx) delta_x = -1;
+                // if (dy > sy) delta_y = +1;
+                // if (dy < sy) delta_y = -1;
+                if (!is_correct_line_delta(delta_x, delta_y, figure)) {
                     return false;
                 }
-
-
-                do {
+                do { // сразу смещаем потом проверяем 
                     sx += delta_x;
                     sy += delta_y;
                     if (sx == dx && sy == dy) {
@@ -140,6 +130,45 @@
 
                 } while (is_empety(sx, sy))
                 return false;
+            }
+
+            function is_correct_line_delta(delta_x, delta_y, figure) {
+                if (is_rook(figure))
+                    return is_corect_rook_delta(delta_x, delta_y);
+                if (is_bishop(figure))
+                    return is_corect_bishop_delta(delta_x, delta_y);
+                if (is_queen(figure))
+                    return is_corect_queen_delta(delta_x, delta_y);
+                return false;
+
+            }
+
+            function is_corect_rook_delta(delta_x, delta_y) {
+                return Math.abs(delta_x) + Math.abs(delta_y) ==
+                1; //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
+            }
+
+            function is_corect_bishop_delta(delta_x, delta_y) {
+                return Math.abs(delta_x) + Math.abs(delta_y) == 2;
+            }
+
+            function is_corect_queen_delta(delta_x, delta_y) {
+                return true;
+            }
+
+            function is_correct_king_move(sx, sy, dx, dy) {
+                if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
+                    return true;
+                }
+                return false;
+            }
+
+            function is_correct_queen_move(sx, sy, dx, dy) {
+                return is_correct_line_move(sx, sy, dx, dy, "Q")
+            }
+
+            function is_correct_bishop_move(sx, sy, dx, dy) {
+                return is_correct_line_move(sx, sy, dx, dy, "B")
             }
 
             function is_correct_knight_move(sx, sy, dx, dy) // only check thet can move fore other pozition
@@ -152,29 +181,7 @@
             }
 
             function is_correct_rook_move(sx, sy, dx, dy) {
-
-                let delta_x = Math.sign(dx - sx); // 
-                let delta_y = Math.sign(dy - sy);
-                // if (dx > sx) delta_x = +1;
-                // if (dx < sx) delta_x = -1;
-                // if (dy > sy) delta_y = +1;
-                // if (dy < sy) delta_y = -1;
-                if (Math.abs(delta_x) + Math.abs(delta_y) !=
-                    1) { //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
-                    return false;
-                }
-
-
-                do {
-                    sx += delta_x;
-                    sy += delta_y;
-                    if (sx == dx && sy == dy) {
-                        return true;
-                    }
-
-
-                } while (is_empety(sx, sy)) // сразу смещаем потом проверяем 
-                return false;
+                return is_correct_line_move(sx, sy, dx, dy, "R")
             }
 
 
@@ -224,15 +231,17 @@
             }
 
             function can_move_from(x, y) {
-                if(!on_map(x,y)){
-                return false;}
+                if (!on_map(x, y)) {
+                    return false;
+                }
                 return get_color(x, y) == move_color;
 
             }
 
             function can_move_to(x, y) {
-                if(!on_map(x,y)){
-                return false;}
+                if (!on_map(x, y)) {
+                    return false;
+                }
                 if (map[x][y] == " ")
                     return true;
                 return get_color(x, y) != move_color; // white cat goes to black
