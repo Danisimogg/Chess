@@ -109,37 +109,48 @@
         function is_pawn(figure) {
             return figure.toUpperCase() == "P";
         }
-function is_correct_king_move (sx,sy,dx,dy)
-{
-    if(Math.abs (dx-sx) <=1 && Math.abs (dy - sy) <=1){
-        return true;
-    }
-    return false;
-}
-function is_correct_queen_move (sx,sy,dx,dy)
-{
-    return true;
-}
-function is_correct_bishop_move (sx,sy,dx,dy)
-{
-    return true;
-}
-function is_correct_knight_move (sx,sy,dx,dy) // only check thet can move fore other pozition
-{
-    if (Math.abs (dx-sx)==1 && Math.abs (dy - sy) == 2)
-    return true;
-    if (Math.abs (dx-sx)==2 && Math.abs (dy - sy) == 1)
-    return true;
-    return false;
-}
-function is_correct_rook_move (sx,sy,dx,dy)
-{
-    return true;
-}
-function is_correct_pawn_move (sx,sy,dx,dy)
-{
-    return true;
-}
+
+        function is_correct_king_move(sx, sy, dx, dy) {
+            if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
+                return true;
+            }
+            return false;
+        }
+
+        function is_correct_queen_move(sx, sy, dx, dy) {
+            return true;
+        }
+
+        function is_correct_bishop_move(sx, sy, dx, dy) {
+            return true;
+        }
+
+        function is_correct_knight_move(sx, sy, dx, dy) // only check thet can move fore other pozition
+        {
+            if (Math.abs(dx - sx) == 1 && Math.abs(dy - sy) == 2)
+                return true;
+            if (Math.abs(dx - sx) == 2 && Math.abs(dy - sy) == 1)
+                return true;
+            return false;
+        }
+
+        function is_correct_rook_move(sx, sy, dx, dy) {
+
+            let delta_x = 0; // 
+            let delta_y = 0;
+            if (dx > sx) delta_x = +1;
+            if (dx < sx) delta_x = -1;
+            if (dy > sy) delta_y = +1;
+            if (dy < sy) delta_y = -1;
+            if (Math.abs(delta_x) + Math.abs(delta_y) != 1) { //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
+                return false
+            }
+            return true;
+        }
+
+        function is_correct_pawn_move(sx, sy, dx, dy) {
+            return true;
+        }
 
         function can_move(sx, sy, dx, dy) {
             if (!can_move_from(sx, sy)) // figure can step
@@ -165,7 +176,7 @@ function is_correct_pawn_move (sx,sy,dx,dy)
             init_inf();
             for (let x = 0; x <= 7; x++)
                 for (let y = 0; y <= 7; y++)
-                    if (can_move(move_from_x ,move_from_y ,x, y))
+                    if (can_move(move_from_x, move_from_y, x, y))
                         inf[x][y] = 2;
         }
 
