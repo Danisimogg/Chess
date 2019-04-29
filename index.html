@@ -145,7 +145,7 @@
 
             function is_corect_rook_delta(delta_x, delta_y) {
                 return Math.abs(delta_x) + Math.abs(delta_y) ==
-                1; //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
+                    1; //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
             }
 
             function is_corect_bishop_delta(delta_x, delta_y) {
@@ -187,6 +187,18 @@
 
 
             function is_correct_pawn_move(sx, sy, dx, dy) {
+                if (get_color(sx, sy) == "white") {
+                    return is_correct_white_pawn_move(sx, sy, dx, dy);
+                }
+                if (get_color(sx, sy) == "black") {
+                    return is_correct_black_pawn_move(sx, sy, dx, dy);
+                }
+                return false;
+            }
+            function is_correct_white_pawn_move(sx, sy, dx, dy){
+                return true;
+            }
+            function is_correct_black_pawn_move(sx, sy, dx, dy){
                 return true;
             }
 
@@ -207,9 +219,7 @@
                     return false;
                 if (!can_move_to(dx, dy)) // square free ( or can kill)
                     return false;
-                if (!is_correct_move(sx, sy, dx, dy))
-                    return false;
-                return true;
+                return is_correct_move(sx, sy, dx, dy);
             }
 
             function mark_moves_from() {
