@@ -111,10 +111,10 @@
         }
 function is_correct_king_move (sx,sy,dx,dy)
 {
-    if(dx == 4 && dy == 4){
-        return false;
+    if(Math.abs (dx-sx) <=1 && Math.abs (dy - sy) <=1){
+        return true;
     }
-    return true;
+    return false;
 }
 function is_correct_queen_move (sx,sy,dx,dy)
 {
