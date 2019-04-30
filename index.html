@@ -203,13 +203,25 @@
                 if (is_pawn_passant()) {
                     return true;
                 }
-                if(!is_empety(dx,dy)){ // это взятие ?
-                    if (Math.abs(dx-sx)!=1){// 1 шаг влево вправо
+                if (!is_empety(dx, dy)) { // это взятие ?
+                    if (Math.abs(dx - sx) != 1) { // 1 шаг влево вправо
                         return false;
                     }
-                    return dy-sy==1;
+                    return dy - sy == 1;
                 }
-                return true;
+
+                if (dx != sx) {
+                    return false;
+                }
+                if (dy - sy == 1) {
+                    return true;
+                }
+                if (dy - sy == 2) {
+                    if (sy != 1)
+                        return false;
+                        return is_empety(sx,sy +1);
+                }
+                return false;
             }
 
             function is_correct_black_pawn_move(sx, sy, dx, dy) {
