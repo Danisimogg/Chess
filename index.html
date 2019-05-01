@@ -189,55 +189,58 @@
 
 
             function is_correct_pawn_move(sx, sy, dx, dy) {
+                if (sy < 1 || sy > 6) {
+                    return false;
+                }
                 if (get_color(sx, sy) == "white") {
-                    return is_correct_white_pawn_move(sx, sy, dx, dy);
+                    return is_correct_sign_pawn_move(sx, sy, dx, dy, +1);
                 }
                 if (get_color(sx, sy) == "black") {
-                    return is_correct_black_pawn_move(sx, sy, dx, dy);
+                    return is_correct_sign_pawn_move(sx, sy, dx, dy, -1);
                 }
                 return false;
             }
 
-            function is_correct_white_pawn_move(sx, sy, dx, dy) {
-                if (sy < 1 || sy > 6) {
-                    return false;
-                }
-                if (is_pawn_passant(sx, sy, dx, dy)) {
+            function is_correct_sign_pawn_move(sx, sy, dx, dy, sign) {
+
+                if (is_pawn_passant(sx, sy, dx, dy, sign)) {
                     return true;
                 }
                 if (!is_empety(dx, dy)) { // это взятие ?
                     if (Math.abs(dx - sx) != 1) { // 1 шаг влево вправо
                         return false;
                     }
-                    return dy - sy == 1;
+                    return dy - sy == sign;
                 }
 
                 if (dx != sx) {
                     return false;
                 }
-                if (dy - sy == 1) {
+                if (dy - sy == sign) {
                     return true;
                 }
-                if (dy - sy == 2) { // на две клетки ( 1 [ ход])
-                    if (sy != 1)
+                if (dy - sy == sign * 2) { // на две клетки ( 1 [ ход])
+                    if (sy != 1 && sy != 6)
                         return false;
-                    return is_empety(sx, sy + 1);
+                    return is_empety(sx, sy + sign);
                 }
                 return false;
             }
 
-            function is_correct_black_pawn_move(sx, sy, dx, dy) {
-                return true;
-            }
 
-            function is_pawn_passant(sx, sy, dx, dy) {
+
+            function is_pawn_passant(sx, sy, dx, dy, sign) {
                 if (!(dx == pawn_attack_x && dy == pawn_attack_y)) {
                     return false;
                 }
-                if (sy != 4) {
+                if (sign == +1 && sy != 4) {
                     return false;
                 }
-                if (dy - sy != 1) {
+
+                if (sign == -1 && sy != 3) {
+                    return false;
+                }
+                if (dy - sy != sign) {
                     return false;
                 }
                 return (Math.abs(dx - sx) == 1);
@@ -329,11 +332,7 @@
 
                 map[to_x][to_y] = from_figure;
                 map[move_from_x][move_from_y] = " "; // deleted old figure
-                if (is_pawn(from_figure)) {
-                    if (to_x == pawn_attack_x && to_y == pawn_attack_y) {
-                        map[to_x][to_y - 1] = " "; // wjite 
-                    }
-                }
+               
                 check_pawn_attack(from_figure, to_x, to_y);
                 turn_move();
                 mark_moves_from(); //change figue
@@ -341,7 +340,15 @@
             }
 
             function check_pawn_attack(from_figure, to_x, to_y) {
-
+                if (is_pawn(from_figure)) {
+                    if (to_x == pawn_attack_x && to_y == pawn_attack_y) 
+                        
+                        if (move_color == "white") 
+                            map[to_x][to_y - 1] = " ";// white 
+                         else
+                            map[to_x][to_y + 1] = " "; // black 
+                    
+                }
                 pawn_attack_x = -1;
                 pawn_attack_y = -1;
                 if (is_pawn(from_figure)) {
