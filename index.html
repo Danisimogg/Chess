@@ -30,6 +30,7 @@
         </div>
 
         <script>
+            
             let map = Array();
             let inf = Array();
             let move_color = "white";
@@ -41,10 +42,10 @@
             function init_map() { //starting figure position
                 // map[x][y]  R - white . r - black
                 map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
-                    ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
-                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
+                    ["R", "P", " ", " ", " ", " ", "P", "r"], //x=0
+                    ["N", "P", " ", " ", " ", " ", "P", "n"], //x =1
                     ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
-                    ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
+                    ["Q", "P", " ", " ", " ", " ", "P", "q"], //x =3
                     ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
                     ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
                     ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
@@ -263,17 +264,19 @@
                     return false;
                 if (!can_move_to(dx, dy)) // square free ( or can kill)
                     return false;
-               if(! is_correct_move(sx, sy, dx, dy)){
-                   return false;
-               };
-               if (!is_check()){
-                   return true;
-               } 
-               return false
+                if (!is_correct_move(sx, sy, dx, dy)) {
+                    return false;
+                };
+                if (!is_check()) {
+                    return true;
+                }
+                return false
             }
-function is_check(){
-    return Math.random () <0.2;
-}
+
+            function is_check() {
+                return Math.random() < 0.2;
+            }
+
             function mark_moves_from() {
                 init_inf();
                 for (let sx = 0; sx <= 7; sx++)
