@@ -41,14 +41,14 @@
             function init_map() { //starting figure position
                 // map[x][y]  R - white . r - black
                 map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
-                    ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
-                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
-                    ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
-                    ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
-                    ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
-                    ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
-                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
-                    ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
+                    ["R", "p", " ", " ", " ", " ", "P", "r"], //x=0
+                    ["N", "p", " ", " ", " ", " ", "P", "n"], //x =1
+                    ["B", "p", " ", " ", " ", " ", "P", "b"], //x =2
+                    ["Q", "p", " ", " ", " ", " ", "P", "q"], //x =3
+                    ["K", "p", " ", " ", " ", " ", "P", "k"], //x =4
+                    ["B", "p", " ", " ", " ", " ", "P", "b"], //x =5
+                    ["N", "p", " ", " ", " ", " ", "P", "n"], //x =6
+                    ["R", "p", " ", " ", " ", " ", "P", "r"] //x =7 WHITE LEFT - BLACK RIGHT
                 ];
             }
 
@@ -328,26 +328,44 @@
             function click_box_to(to_x, to_y) {
                 from_figure = map[move_from_x][move_from_y];
                 to_figure = map[to_x, to_y];
+                pawn_figure = promote_pawn(from_figure, to_y);
 
-
-                map[to_x][to_y] = from_figure;
+                map[to_x][to_y] = pawn_figure == " " ? from_figure : pawn_figure;
                 map[move_from_x][move_from_y] = " "; // deleted old figure
-               
+
                 check_pawn_attack(from_figure, to_x, to_y);
                 turn_move();
                 mark_moves_from(); //change figue
                 show_map();
             }
 
+            function promote_pawn(from_figure, to_y) {
+                if (!is_pawn(from_figure)) {
+                    return " ";
+                }
+
+                if (!(to_y == 7 || to_y == 0)) // дошла к концу
+                    return " ";
+                do {
+                    figure = prompt("Select figure to promote: Q R B N ", "Q")
+                } while (!(is_queen(figure) || is_rook(figure) || is_bishop(figure) || is_knight(figure)));
+                if (move_color == "white")
+                    from_figure = figure.toUpperCase();
+                else
+                    from_figure = figure.toLowerCase();
+                return from_figure;
+
+            }
+
             function check_pawn_attack(from_figure, to_x, to_y) {
                 if (is_pawn(from_figure)) {
-                    if (to_x == pawn_attack_x && to_y == pawn_attack_y) 
-                        
-                        if (move_color == "white") 
-                            map[to_x][to_y - 1] = " ";// white 
-                         else
+                    if (to_x == pawn_attack_x && to_y == pawn_attack_y)
+
+                        if (move_color == "white")
+                            map[to_x][to_y - 1] = " "; // white 
+                        else
                             map[to_x][to_y + 1] = " "; // black 
-                    
+
                 }
                 pawn_attack_x = -1;
                 pawn_attack_y = -1;
