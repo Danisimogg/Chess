@@ -43,10 +43,10 @@
             function init_map() { //starting figure position
                 // map[x][y]  R - white . r - black
                 map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
-                    ["R", "P", " ", " ", " ", " ", "P", "r"], //x=0
-                    ["N", "P", " ", " ", " ", " ", "P", "n"], //x =1
+                    ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
+                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
                     ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
-                    ["Q", "P", " ", " ", " ", " ", "P", "q"], //x =3
+                    ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
                     ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
                     ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
                     ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
@@ -87,7 +87,7 @@
                 if (is_pawn(figure)) {
                     return is_correct_pawn_move(sx, sy, dx, dy);
                 }
-                return true;
+                return false;
             }
 
             function is_king(figure) {
@@ -268,14 +268,41 @@
                 if (!is_correct_move(sx, sy, dx, dy)) {
                     return false;
                 };
-                if (!is_check()) {
+                if (!is_check(sx, sy, dx, dy)) {
                     return true;
                 }
                 return false
             }
 
-            function is_check() {
-                return Math.random() < 0.2;
+            function is_check(sx, sy, dx, dy) {
+                move_figure(sx, sy, dx, dy); //1) сделать ход белых
+                king = find_figure(move_color == "white" ?"K" : "k"); // 2)найти короля
+                turn_move(); // Передать ход
+                let can_be_eaten = false;
+                for (let x = 0; x <= 7; x++) // 3) Перебрать все черные фигуры
+                    for (let y = 0; y <= 7; y++)
+                        if (get_color(x, y) == move_color)
+                            if (is_correct_move(x, y, king.x, king.y)) //4) проверить,может ли ч.ф пойти на клетку белого короля
+                                can_be_eaten = true;
+                turn_move(); //  Передать ход назад
+
+                back_figure(sx, sy, dx, dy);
+                //5) вернуть ход
+                return can_be_eaten;
+            }
+
+            function find_figure(figure) {
+                for (let x = 0; x <= 7; x++)
+                    for (let y = 0; y <= 7; y++)
+                        if (map[x][y] == figure)
+                            return {
+                                x: x,
+                                y: y
+                            }
+                return {
+                    x: -1,
+                    y: -1
+                }
             }
 
             function mark_moves_from() {
