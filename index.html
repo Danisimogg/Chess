@@ -1,510 +1,542 @@
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>chess</title>
-        <!-- <link rel="stylesheet" type="text/css" href="chess.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>chess</title>
+    <!-- <link rel="stylesheet" type="text/css" href="chess.css">
         -->
-        <style>
-            .figure_to_html {
-                cursor: pointer;
-            }
-        </style>
-        <script src="chess.js"></script>
-    </head>
+    <style>
+        .figure_to_html {
+            cursor: pointer;
+        }
+    </style>
+    <script src="chess.js"></script>
+</head>
 
-    <body>
-        <header>
-            <div 1class="logo">
-                <h2 class logo>Chess </h2>
-            </div>
-        </header>
-        <div id="main">
-            <div id="board">
-
-            </div>
-            <div id="info">info</div>
+<body>
+    <header>
+        <div 1class="logo">
+            <h2 class logo>Chess </h2>
         </div>
+    </header>
 
-        <script>
-            let map = Array();
-            let inf = Array();
-            let move_color = "white";
-            let move_from_x;
-            let move_from_y;
-            let pawn_attack_x; // кординаты битого поля
-            let pawn_attack_y;
-            let from_figure;
-            let to_figure;
+    <div id="board">
 
-            function init_map() { //starting figure position
-                // map[x][y]  R - white . r - black
-                map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
-                    ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
-                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
-                    ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
-                    ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
-                    ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
-                    ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
-                    ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
-                    ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
-                ];
+    </div>
+
+
+    <div id="info">
+
+    </div>
+
+
+    <script>
+        let map = Array();
+        let inf = Array();
+        let move_color = "white";
+        let move_from_x;
+        let move_from_y;
+        let pawn_attack_x; // кординаты битого поля
+        let pawn_attack_y;
+        let from_figure;
+        let to_figure;
+
+        function init_map() { //starting figure position
+            // map[x][y]  R - white . r - black
+            map = [ //  y=0 ;  y=1   y=2 ; y=3   y=4 ; y=5   y=6 ; y=7
+                ["R", "P", " ", " ", " ", " ", "p", "r"], //x=0
+                ["N", "P", " ", " ", " ", " ", "p", "n"], //x =1
+                ["B", "P", " ", " ", " ", " ", "p", "b"], //x =2
+                ["Q", "P", " ", " ", " ", " ", "p", "q"], //x =3
+                ["K", "P", " ", " ", " ", " ", "p", "k"], //x =4
+                ["B", "P", " ", " ", " ", " ", "p", "b"], //x =5
+                ["N", "P", " ", " ", " ", " ", "p", "n"], //x =6
+                ["R", "P", " ", " ", " ", " ", "p", "r"] //x =7 WHITE LEFT - BLACK RIGHT
+            ];
+        }
+
+        function init_inf() {
+            inf = [ // changes by step 
+                [" ", " ", " ", " ", " ", " ", " ", " "], // 
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " ", " ", " "]
+            ];
+        }
+
+        function is_correct_move(sx, sy, dx, dy) {
+            let figure = map[sx][sy];
+            if (is_king(figure)) {
+                return is_correct_king_move(sx, sy, dx, dy);
             }
-
-            function init_inf() {
-                inf = [ // changes by step 
-                    [" ", " ", " ", " ", " ", " ", " ", " "], // 
-                    [" ", " ", " ", " ", " ", " ", " ", " "],
-                    [" ", " ", " ", " ", " ", " ", " ", " "],
-                    [" ", " ", " ", " ", " ", " ", " ", " "],
-                    [" ", " ", " ", " ", " ", " ", " ", " "],
-                    [" ", " ", " ", " ", " ", " ", " ", " "],
-                    [" ", " ", " ", " ", " ", " ", " ", " "],
-                    [" ", " ", " ", " ", " ", " ", " ", " "]
-                ];
+            if (is_queen(figure)) {
+                return is_correct_queen_move(sx, sy, dx, dy);
             }
+            if (is_bishop(figure)) {
+                return is_correct_bishop_move(sx, sy, dx, dy);
+            }
+            if (is_knight(figure)) {
+                return is_correct_knight_move(sx, sy, dx, dy);
+            }
+            if (is_rook(figure)) {
+                return is_correct_rook_move(sx, sy, dx, dy);
+            }
+            if (is_pawn(figure)) {
+                return is_correct_pawn_move(sx, sy, dx, dy);
+            }
+            return false;
+        }
 
-            function is_correct_move(sx, sy, dx, dy) {
-                let figure = map[sx][sy];
-                if (is_king(figure)) {
-                    return is_correct_king_move(sx, sy, dx, dy);
-                }
-                if (is_queen(figure)) {
-                    return is_correct_queen_move(sx, sy, dx, dy);
-                }
-                if (is_bishop(figure)) {
-                    return is_correct_bishop_move(sx, sy, dx, dy);
-                }
-                if (is_knight(figure)) {
-                    return is_correct_knight_move(sx, sy, dx, dy);
-                }
-                if (is_rook(figure)) {
-                    return is_correct_rook_move(sx, sy, dx, dy);
-                }
-                if (is_pawn(figure)) {
-                    return is_correct_pawn_move(sx, sy, dx, dy);
-                }
+        function is_king(figure) {
+            return figure.toUpperCase() == "K";
+        }
+
+        function is_queen(figure) {
+            return figure.toUpperCase() == "Q";
+        }
+
+        function is_bishop(figure) {
+            return figure.toUpperCase() == "B";
+        }
+
+        function is_knight(figure) {
+            return figure.toUpperCase() == "N";
+        }
+
+        function is_rook(figure) {
+            return figure.toUpperCase() == "R";
+        }
+
+        function is_pawn(figure) {
+            return figure.toUpperCase() == "P";
+        }
+
+        function is_correct_line_move(sx, sy, dx, dy, figure) {
+            let delta_x = Math.sign(dx - sx);
+            let delta_y = Math.sign(dy - sy);
+            // if (dx > sx) delta_x = +1;
+            // if (dx < sx) delta_x = -1;
+            // if (dy > sy) delta_y = +1;
+            // if (dy < sy) delta_y = -1;
+            if (!is_correct_line_delta(delta_x, delta_y, figure)) {
                 return false;
             }
-
-            function is_king(figure) {
-                return figure.toUpperCase() == "K";
-            }
-
-            function is_queen(figure) {
-                return figure.toUpperCase() == "Q";
-            }
-
-            function is_bishop(figure) {
-                return figure.toUpperCase() == "B";
-            }
-
-            function is_knight(figure) {
-                return figure.toUpperCase() == "N";
-            }
-
-            function is_rook(figure) {
-                return figure.toUpperCase() == "R";
-            }
-
-            function is_pawn(figure) {
-                return figure.toUpperCase() == "P";
-            }
-
-            function is_correct_line_move(sx, sy, dx, dy, figure) {
-                let delta_x = Math.sign(dx - sx);
-                let delta_y = Math.sign(dy - sy);
-                // if (dx > sx) delta_x = +1;
-                // if (dx < sx) delta_x = -1;
-                // if (dy > sy) delta_y = +1;
-                // if (dy < sy) delta_y = -1;
-                if (!is_correct_line_delta(delta_x, delta_y, figure)) {
-                    return false;
+            do { // сразу смещаем потом проверяем 
+                sx += delta_x;
+                sy += delta_y;
+                if (sx == dx && sy == dy) {
+                    return true;
                 }
-                do { // сразу смещаем потом проверяем 
-                    sx += delta_x;
-                    sy += delta_y;
-                    if (sx == dx && sy == dy) {
-                        return true;
-                    }
 
 
-                } while (is_empety(sx, sy))
-                return false;
-            }
+            } while (is_empety(sx, sy))
+            return false;
+        }
 
-            function is_correct_line_delta(delta_x, delta_y, figure) {
-                if (is_rook(figure))
-                    return is_corect_rook_delta(delta_x, delta_y);
-                if (is_bishop(figure))
-                    return is_corect_bishop_delta(delta_x, delta_y);
-                if (is_queen(figure))
-                    return is_corect_queen_delta(delta_x, delta_y);
-                return false;
+        function is_correct_line_delta(delta_x, delta_y, figure) {
+            if (is_rook(figure))
+                return is_corect_rook_delta(delta_x, delta_y);
+            if (is_bishop(figure))
+                return is_corect_bishop_delta(delta_x, delta_y);
+            if (is_queen(figure))
+                return is_corect_queen_delta(delta_x, delta_y);
+            return false;
 
-            }
+        }
 
-            function is_corect_rook_delta(delta_x, delta_y) {
-                return Math.abs(delta_x) + Math.abs(delta_y) ==
-                    1; //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
-            }
+        function is_corect_rook_delta(delta_x, delta_y) {
+            return Math.abs(delta_x) + Math.abs(delta_y) ==
+                1; //  delta x == 1 delte y == 0 || delta x == 0 delta y =1
+        }
 
-            function is_corect_bishop_delta(delta_x, delta_y) {
-                return Math.abs(delta_x) + Math.abs(delta_y) == 2;
-            }
+        function is_corect_bishop_delta(delta_x, delta_y) {
+            return Math.abs(delta_x) + Math.abs(delta_y) == 2;
+        }
 
-            function is_corect_queen_delta(delta_x, delta_y) {
+        function is_corect_queen_delta(delta_x, delta_y) {
+            return true;
+        }
+
+        function is_correct_king_move(sx, sy, dx, dy) {
+            if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
                 return true;
             }
+            return false;
+        }
 
-            function is_correct_king_move(sx, sy, dx, dy) {
-                if (Math.abs(dx - sx) <= 1 && Math.abs(dy - sy) <= 1) {
-                    return true;
+        function is_correct_queen_move(sx, sy, dx, dy) {
+            return is_correct_line_move(sx, sy, dx, dy, "Q")
+        }
+
+        function is_correct_bishop_move(sx, sy, dx, dy) {
+            return is_correct_line_move(sx, sy, dx, dy, "B")
+        }
+
+        function is_correct_knight_move(sx, sy, dx, dy) // only check thet can move fore other pozition
+        {
+            if (Math.abs(dx - sx) == 1 && Math.abs(dy - sy) == 2)
+                return true;
+            if (Math.abs(dx - sx) == 2 && Math.abs(dy - sy) == 1)
+                return true;
+            return false;
+        }
+
+        function is_correct_rook_move(sx, sy, dx, dy) {
+            return is_correct_line_move(sx, sy, dx, dy, "R")
+        }
+
+
+
+        function is_correct_pawn_move(sx, sy, dx, dy) {
+            if (sy < 1 || sy > 6) {
+                return false;
+            }
+            if (get_color(sx, sy) == "white") {
+                return is_correct_sign_pawn_move(sx, sy, dx, dy, +1);
+            }
+            if (get_color(sx, sy) == "black") {
+                return is_correct_sign_pawn_move(sx, sy, dx, dy, -1);
+            }
+            return false;
+        }
+
+        function is_correct_sign_pawn_move(sx, sy, dx, dy, sign) {
+
+            if (is_pawn_passant(sx, sy, dx, dy, sign)) {
+                return true;
+            }
+            if (!is_empety(dx, dy)) { // это взятие ?
+                if (Math.abs(dx - sx) != 1) { // 1 шаг влево вправо
+                    return false;
                 }
+                return dy - sy == sign;
+            }
+
+            if (dx != sx) {
+                return false;
+            }
+            if (dy - sy == sign) {
+                return true;
+            }
+            if (dy - sy == sign * 2) { // на две клетки ( 1 [ ход])
+                if (sy != 1 && sy != 6)
+                    return false;
+                return is_empety(sx, sy + sign);
+            }
+            return false;
+        }
+
+
+
+        function is_pawn_passant(sx, sy, dx, dy, sign) {
+            if (!(dx == pawn_attack_x && dy == pawn_attack_y)) {
+                return false;
+            }
+            if (sign == +1 && sy != 4) {
                 return false;
             }
 
-            function is_correct_queen_move(sx, sy, dx, dy) {
-                return is_correct_line_move(sx, sy, dx, dy, "Q")
-            }
-
-            function is_correct_bishop_move(sx, sy, dx, dy) {
-                return is_correct_line_move(sx, sy, dx, dy, "B")
-            }
-
-            function is_correct_knight_move(sx, sy, dx, dy) // only check thet can move fore other pozition
-            {
-                if (Math.abs(dx - sx) == 1 && Math.abs(dy - sy) == 2)
-                    return true;
-                if (Math.abs(dx - sx) == 2 && Math.abs(dy - sy) == 1)
-                    return true;
+            if (sign == -1 && sy != 3) {
                 return false;
             }
-
-            function is_correct_rook_move(sx, sy, dx, dy) {
-                return is_correct_line_move(sx, sy, dx, dy, "R")
-            }
-
-
-
-            function is_correct_pawn_move(sx, sy, dx, dy) {
-                if (sy < 1 || sy > 6) {
-                    return false;
-                }
-                if (get_color(sx, sy) == "white") {
-                    return is_correct_sign_pawn_move(sx, sy, dx, dy, +1);
-                }
-                if (get_color(sx, sy) == "black") {
-                    return is_correct_sign_pawn_move(sx, sy, dx, dy, -1);
-                }
+            if (dy - sy != sign) {
                 return false;
             }
+            return (Math.abs(dx - sx) == 1);
+        }
 
-            function is_correct_sign_pawn_move(sx, sy, dx, dy, sign) {
-
-                if (is_pawn_passant(sx, sy, dx, dy, sign)) {
-                    return true;
-                }
-                if (!is_empety(dx, dy)) { // это взятие ?
-                    if (Math.abs(dx - sx) != 1) { // 1 шаг влево вправо
-                        return false;
-                    }
-                    return dy - sy == sign;
-                }
-
-                if (dx != sx) {
-                    return false;
-                }
-                if (dy - sy == sign) {
-                    return true;
-                }
-                if (dy - sy == sign * 2) { // на две клетки ( 1 [ ход])
-                    if (sy != 1 && sy != 6)
-                        return false;
-                    return is_empety(sx, sy + sign);
-                }
+        function is_empety(x, y) {
+            if (!on_map(x, y)) {
                 return false;
             }
+            return map[x][y] == " ";
+        }
 
+        function on_map(x, y) {
+            return (x >= 0 && x <= 7 &&
+                y >= 0 && y <= 7)
+        }
 
-
-            function is_pawn_passant(sx, sy, dx, dy, sign) {
-                if (!(dx == pawn_attack_x && dy == pawn_attack_y)) {
-                    return false;
-                }
-                if (sign == +1 && sy != 4) {
-                    return false;
-                }
-
-                if (sign == -1 && sy != 3) {
-                    return false;
-                }
-                if (dy - sy != sign) {
-                    return false;
-                }
-                return (Math.abs(dx - sx) == 1);
-            }
-
-            function is_empety(x, y) {
-                if (!on_map(x, y)) {
-                    return false;
-                }
-                return map[x][y] == " ";
-            }
-
-            function on_map(x, y) {
-                return (x >= 0 && x <= 7 &&
-                    y >= 0 && y <= 7)
-            }
-
-            function can_move(sx, sy, dx, dy) {
-                if (!can_move_from(sx, sy)) // figure can step
-                    return false;
-                if (!can_move_to(dx, dy)) // square free ( or can kill)
-                    return false;
-                if (!is_correct_move(sx, sy, dx, dy)) {
-                    return false;
-                };
-                if (!is_check(sx, sy, dx, dy)) {
-                    return true;
-                }
-                return false
-            }
-
-            function is_check(sx, sy, dx, dy) {
-                move_figure(sx, sy, dx, dy); //1) сделать ход белых
-                king = find_figure(move_color == "white" ?"K" : "k"); // 2)найти короля
-                turn_move(); // Передать ход
-                let can_be_eaten = false;
-                for (let x = 0; x <= 7; x++) // 3) Перебрать все черные фигуры
-                    for (let y = 0; y <= 7; y++)
-                        if (get_color(x, y) == move_color)
-                            if (is_correct_move(x, y, king.x, king.y)) //4) проверить,может ли ч.ф пойти на клетку белого короля
-                                can_be_eaten = true;
-                turn_move(); //  Передать ход назад
-
-                back_figure(sx, sy, dx, dy);
-                //5) вернуть ход
-                return can_be_eaten;
-            }
-
-            function find_figure(figure) {
-                for (let x = 0; x <= 7; x++)
-                    for (let y = 0; y <= 7; y++)
-                        if (map[x][y] == figure)
-                            return {
-                                x: x,
-                                y: y
-                            }
-                return {
-                    x: -1,
-                    y: -1
-                }
-            }
-
-            function mark_moves_from() {
-                init_inf();
-                for (let sx = 0; sx <= 7; sx++)
-                    for (let sy = 0; sy <= 7; sy++)
-                        for (let dx = 0; dx <= 7; dx++)
-                            for (let dy = 0; dy <= 7; dy++)
-                                if (can_move(sx, sy, dx, dy))
-                                    inf[sx][sy] = 1;
-            }
-
-            function mark_moves_to() {
-                init_inf();
-                for (let x = 0; x <= 7; x++)
-                    for (let y = 0; y <= 7; y++)
-                        if (can_move(move_from_x, move_from_y, x, y))
-                            inf[x][y] = 2;
-            }
-
-            function can_move_from(x, y) {
-                if (!on_map(x, y)) {
-                    return false;
-                }
-                return get_color(x, y) == move_color;
-
-            }
-
-            function can_move_to(x, y) {
-                if (!on_map(x, y)) {
-                    return false;
-                }
-                if (map[x][y] == " ")
-                    return true;
-                return get_color(x, y) != move_color; // white cat goes to black
-
-            }
-
-            function get_color(x, y) {
-                let figure = map[x][y];
-                if (figure == " ")
-                    return "";
-                return (figure.toUpperCase() == figure) ? "white" : "black";
-            }
-
-            function click_box(x, y) {
-                if (inf[x][y] == "1")
-                    click_box_from(x, y);
-                if (inf[x][y] == "2")
-                    click_box_to(x, y);
-
-
-            }
-
-            function click_box_from(x, y) {
-                move_from_x = x;
-                move_from_y = y; // save corinait of figure
-                mark_moves_to();
-                show_map();
-            }
-
-            function move_figure(sx, sy, dx, dy) {
-                from_figure = map[sx][sy];
-                to_figure = map[dx][dy];
-                map[dx][dy] = from_figure;
-                map[sx][sy] = " "; // deleted old figure
-
-            }
-
-            function back_figure(sx, sy, dx, dy) {
-                map[sx][sy] = from_figure;
-                map[dx][dy] = to_figure
-            }
-
-            function click_box_to(to_x, to_y) {
-                move_figure(move_from_x, move_from_y, to_x, to_y)
-                pawn_figure = promote_pawn(from_figure, to_x, to_y);
-
-
-
-                check_pawn_attack(from_figure, to_x, to_y);
-                turn_move();
-                mark_moves_from(); //change figue
-                show_map();
-            }
-
-            function promote_pawn(from_figure, to_x, to_y) {
-                if (!is_pawn(from_figure)) {
-                    return " ";
-                }
-
-                if (!(to_y == 7 || to_y == 0)) // дошла к концу
-                    return;
-                do {
-                    figure = prompt("Select figure to promote: Q R B N ", "Q")
-                } while (!(is_queen(figure) || is_rook(figure) || is_bishop(figure) || is_knight(figure)));
-                if (move_color == "white")
-                    figure = figure.toUpperCase();
-                else
-                    figure = figure.toLowerCase();
-                map[to_x][to_y] = figure;
-
-            }
-
-            function check_pawn_attack(from_figure, to_x, to_y) {
-                if (is_pawn(from_figure)) {
-                    if (to_x == pawn_attack_x && to_y == pawn_attack_y)
-
-                        if (move_color == "white")
-                            map[to_x][to_y - 1] = " "; // white 
-                        else
-                            map[to_x][to_y + 1] = " "; // black 
-
-                }
-                pawn_attack_x = -1;
-                pawn_attack_y = -1;
-                if (is_pawn(from_figure)) {
-                    if (Math.abs(to_y - move_from_y)) {
-                        pawn_attack_x = move_from_x;
-                        pawn_attack_y = (move_from_y + to_y) / 2;
-                    }
-                }
-            }
-
-            function turn_move() {
-                if (move_color == "white")
-                    move_color = "black";
-                else
-                    move_color = "white";
-            }
-
-            function figure_to_html(figure) {
-                switch (figure) {
-                    case "K":
-                        return "&#9812;";
-                    case "k":
-                        return "&#9818;";
-                    case "Q":
-                        return "&#9813;";
-                    case "q":
-                        return "&#9819;";
-                    case "R":
-                        return "&#9814;";
-                    case "r":
-                        return "&#9820;";
-                    case "B":
-                        return "&#9815;";
-                    case "b":
-                        return "&#9821;";
-                    case "N":
-                        return "&#9816;";
-                    case "n":
-                        return "&#9822;";
-                    case "P":
-                        return "&#9817;";
-                    case "p":
-                        return "&#9823;";
-                    default:
-                        return "&nbsp;";
-                }
-            }
-
-            function show_map() {
-                html = "<table border = '1' cellpadding = '2' cellspacing='0' >";
-                for (let y = 7; y >= 0; y--) {
-                    html += "<tr>";
-                    html += "<td>&nbsp;" + y + "&nbsp;</td>";
-                    for (let x = 0; x <= 7; x++) {
-                        if (inf[x][y] == " ")
-                            color = (x + y) % 2 ? "white" : "grey";
-
-                        else
-                            color = inf[x][y] == "1" ? "#aaffaa" : "#FF69B4";
-                        html += "<td style = 'height: 50px; width: 50px; " +
-                            " background-color : " + color + ";" +
-                            " text-align: center ; " +
-                            "font-size:40px" +
-
-                            "' onclick = 'click_box(" + x + "," + y + ");'>";
-                        html += figure_to_html(map[x][y]);
-                        html += "</td>";
-                    }
-                    html += "</tr>";
-                }
-                html += "<tr>";
-                html += "<td>&nbsp; </td>";
-                for (let x = 1; x <= 8; x++) {
-                    html += "<td style = 'text=align: center '>" + x + "</td>";
-                }
-                document.getElementById("board").innerHTML = html;
-            }
-
-            function start() {
-                init_map();
-                mark_moves_from();
-                show_map();
+        function can_move(sx, sy, dx, dy) {
+            if (!can_move_from(sx, sy)) // figure can step
+                return false;
+            if (!can_move_to(dx, dy)) // square free ( or can kill)
+                return false;
+            if (!is_correct_move(sx, sy, dx, dy)) {
+                return false;
             };
-            start();
-        </script>
+            if (!is_check_after_move(sx, sy, dx, dy)) {
+                return true;
+            }
+            return false
+        }
+
+        function is_check_after_move(sx, sy, dx, dy) {
+
+
+            move_figure(sx, sy, dx, dy);
+
+            // 2)найти короля
+
+            turn_move(); // Передать ход
+            let check = is_check(move_color);
+            turn_move(); //  Передать ход назад
+
+            back_figure(sx, sy, dx, dy);
+            //5) вернуть ход
+            return check;
+        }
+
+        function is_check(for_color) {
+            //1) сделать ход белых
+            king = find_figure(for_color == "white" ? "k" : "K");
+            // если ход белых ищем белого короля
+            for (let x = 0; x <= 7; x++) // 3) Перебрать все черные фигуры
+                for (let y = 0; y <= 7; y++)
+                    if (get_color(x, y) == for_color)
+                        // 3 если ходы белых перебираем беые фигура
+                        if (is_correct_move(x, y, king.x, king.y))
+                            //4) проверить,может ли фигура сьесть короля
+                            return true;
+            return false;
+
+        }
+
+        function find_figure(figure) {
+            for (let x = 0; x <= 7; x++)
+                for (let y = 0; y <= 7; y++)
+                    if (map[x][y] == figure)
+                        return {
+                            x: x,
+                            y: y
+                        }
+            return {
+                x: -1,
+                y: -1
+            }
+        }
+
+        function mark_moves_from() {
+            init_inf();
+            for (let sx = 0; sx <= 7; sx++)
+                for (let sy = 0; sy <= 7; sy++)
+                    for (let dx = 0; dx <= 7; dx++)
+                        for (let dy = 0; dy <= 7; dy++)
+                            if (can_move(sx, sy, dx, dy))
+                                inf[sx][sy] = 1;
+        }
+
+        function mark_moves_to() {
+            init_inf();
+            for (let x = 0; x <= 7; x++)
+                for (let y = 0; y <= 7; y++)
+                    if (can_move(move_from_x, move_from_y, x, y))
+                        inf[x][y] = 2;
+        }
+
+        function can_move_from(x, y) {
+            if (!on_map(x, y)) {
+                return false;
+            }
+            return get_color(x, y) == move_color;
+
+        }
+
+        function can_move_to(x, y) {
+            if (!on_map(x, y)) {
+                return false;
+            }
+            if (map[x][y] == " ")
+                return true;
+            return get_color(x, y) != move_color; // white cat goes to black
+
+        }
+
+        function get_color(x, y) {
+            let figure = map[x][y];
+            if (figure == " ")
+                return "";
+            return (figure.toUpperCase() == figure) ? "white" : "black";
+        }
+
+        function click_box(x, y) {
+            if (inf[x][y] == "1")
+                click_box_from(x, y);
+            if (inf[x][y] == "2")
+                click_box_to(x, y);
+
+
+        }
+
+        function click_box_from(x, y) {
+            move_from_x = x;
+            move_from_y = y; // save corinait of figure
+            mark_moves_to();
+            show_map();
+        }
+
+        function move_figure(sx, sy, dx, dy) {
+            from_figure = map[sx][sy];
+            to_figure = map[dx][dy];
+            map[dx][dy] = from_figure;
+            map[sx][sy] = " "; // deleted old figure
+
+        }
+
+        function back_figure(sx, sy, dx, dy) {
+            map[sx][sy] = from_figure;
+            map[dx][dy] = to_figure
+        }
+
+        function click_box_to(to_x, to_y) {
+            move_figure(move_from_x, move_from_y, to_x, to_y)
+            pawn_figure = promote_pawn(from_figure, to_x, to_y);
 
 
 
-    </body>
+            check_pawn_attack(from_figure, to_x, to_y);
+            turn_move();
+            mark_moves_from(); //change figue
+            show_map();
+        }
 
-    </html>
+        function promote_pawn(from_figure, to_x, to_y) {
+            if (!is_pawn(from_figure)) {
+                return " ";
+            }
+
+            if (!(to_y == 7 || to_y == 0)) // дошла к концу
+                return;
+            do {
+                figure = prompt("Select figure to promote: Q R B N ", "Q")
+            } while (!(is_queen(figure) || is_rook(figure) || is_bishop(figure) || is_knight(figure)));
+            if (move_color == "white")
+                figure = figure.toUpperCase();
+            else
+                figure = figure.toLowerCase();
+            map[to_x][to_y] = figure;
+
+        }
+
+        function check_pawn_attack(from_figure, to_x, to_y) {
+            if (is_pawn(from_figure)) {
+                if (to_x == pawn_attack_x && to_y == pawn_attack_y)
+
+                    if (move_color == "white")
+                        map[to_x][to_y - 1] = " "; // white 
+                    else
+                        map[to_x][to_y + 1] = " "; // black 
+
+            }
+            pawn_attack_x = -1;
+            pawn_attack_y = -1;
+            if (is_pawn(from_figure)) {
+                if (Math.abs(to_y - move_from_y)) {
+                    pawn_attack_x = move_from_x;
+                    pawn_attack_y = (move_from_y + to_y) / 2;
+                }
+            }
+        }
+
+        function turn_move() {
+            if (move_color == "white")
+                move_color = "black";
+            else
+                move_color = "white";
+        }
+
+        function figure_to_html(figure) {
+            switch (figure) {
+                case "K":
+                    return "&#9812;";
+                case "k":
+                    return "&#9818;";
+                case "Q":
+                    return "&#9813;";
+                case "q":
+                    return "&#9819;";
+                case "R":
+                    return "&#9814;";
+                case "r":
+                    return "&#9820;";
+                case "B":
+                    return "&#9815;";
+                case "b":
+                    return "&#9821;";
+                case "N":
+                    return "&#9816;";
+                case "n":
+                    return "&#9822;";
+                case "P":
+                    return "&#9817;";
+                case "p":
+                    return "&#9823;";
+                default:
+                    return "&nbsp;";
+            }
+        }
+
+        function show_map() {
+            html = "<table border = '1' cellpadding = '2' cellspacing='0' >";
+            for (let y = 7; y >= 0; y--) {
+                html += "<tr>";
+                html += "<td>&nbsp;" + y + "&nbsp;</td>";
+                for (let x = 0; x <= 7; x++) {
+                    if (inf[x][y] == " ")
+                        color = (x + y) % 2 ? "white" : "grey";
+
+                    else
+                        color = inf[x][y] == "1" ? "#aaffaa" : "#FF69B4";
+                    html += "<td style = 'height: 50px; width: 50px; " +
+                        " background-color : " + color + ";" +
+                        " text-align: center ; " +
+                        "font-size:40px" +
+
+                        "' onclick = 'click_box(" + x + "," + y + ");'>";
+                    html += figure_to_html(map[x][y]);
+                    html += "</td>";
+                }
+                html += "</tr>";
+            }
+            html += "<tr>";
+            html += "<td>&nbsp; </td>";
+            for (let x = 1; x <= 8; x++) {
+                html += "<td style = 'text=align: center '>" + x + "</td>";
+            }
+            document.getElementById("board").innerHTML = html;
+            // show_info();
+        }
+
+        // function show_info() {
+        //     let html = "Turns:" + move_color;
+        //     // if (is_checkmate()){
+        //     //     html+="CHECKMATE"; //шаъ
+        //     // }
+        //     // else if (is_stalemate ()){
+        //     //     html+="STALEMATE";// мат
+        //     // }
+        //     // else 
+        //     if (is_check(move_color))
+        //         html += "CHECK";
+        //     turn_move();
+        //     document.getElementById("info").innerHTML = html;
+        // }
+
+        function start() {
+            init_map();
+            mark_moves_from();
+            show_map();
+
+        };
+        start();
+    </script>
+
+
+
+</body>
+
+</html>
